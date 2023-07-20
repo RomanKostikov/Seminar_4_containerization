@@ -1,0 +1,41 @@
+Dockerfile:
+# Используем базовый образ Alpine
+
+FROM alpine:latest
+
+# Устанавливаем и настраиваем mariadb
+
+RUN apk update && apk add mariadb mariadb-client
+
+RUN mkdir /run/mysqld && chown mysql /run/mysqld
+
+COPY my.cnf /etc/mysql/my.cnf
+
+# Дополнительно уменьшаем образ
+
+RUN rm -rf /var/cache/apk/*
+
+# Открываем порт 3306 для коммуникации с другими сущностями
+
+EXPOSE 3306
+
+# Запускаем mariadb
+
+CMD ["mysqld_safe"]
+
+# my.cnf
+[mysqld]
+
+# datadir=/data/mysql
+
+# socket=/run/mysqld/mysql.sock
+
+bind-address=0.0.0.0
+
+
+
+# Запуск марии
+sudo docker run -d -p 8085:3306 -v /path/to/external/folder:/data/mysql -e MARIADB_ROOT_PASSWORD=test123 --name my-mariadb my-mariadb
+
+# Запуск phpmyadmin
+
